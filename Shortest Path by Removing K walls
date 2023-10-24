@@ -1,0 +1,54 @@
+Given a 2-D binary matrix of size n*m, where 0 represents an empty space while 1 represents a wall you cannot walk through. You are also given an integer k.
+You can walk up, down, left, or right. Given that you can remove up to k walls, return the minimum number of steps to walk from the top left corner (0, 0) to the bottom right corner (n-1, m-1).
+Note: If there is no way to walk from the top left corner to the bottom right corner, return -1.
+
+
+Example 1:
+
+Input: n = 3, m = 3, k = 1
+mat = {{0, 0, 0},
+       {0, 0, 1},
+       {0, 1, 0}}
+Output:
+4
+Explanation:
+We can remove any one of the walls and
+reach the bottom in 4 moves.  
+
+
+
+
+from collections import deque
+
+def minSteps(mat, k):
+    n, m = len(mat), len(mat[0])
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    
+    visited = [[-1] * m for _ in range(n)]
+    visited[0][0] = k
+    
+    queue = deque([(0, 0, k, 0])
+
+    while queue:
+        x, y, remaining_walls, steps = queue.popleft()
+
+        if x == n - 1 and y == m - 1:
+            return steps
+        
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+
+            if 0 <= nx < n and 0 <= ny < m:
+                new_walls = remaining_walls - mat[nx][ny]
+
+                if new_walls >= 0 and (visited[nx][ny] == -1 or new_walls > visited[nx][ny]):
+                    visited[nx][ny] = new_walls
+                    queue.append((nx, ny, new_walls, steps + 1))
+
+    return -1
+
+# Example
+mat = [[0, 0, 0], [0, 0, 1], [0, 1, 0]]
+k = 1
+result = minSteps(mat, k)
+print(result)
